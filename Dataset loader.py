@@ -1,4 +1,4 @@
-%matplotlib inline
+# %matplotlib inline
 import matplotlib.pyplot as plt
 import torch
 import numpy
@@ -12,9 +12,9 @@ transform = transforms.Compose([transforms.Resize(255),
                                 transforms.CenterCrop(224),
                                 transforms.ToTensor()])
 
-X_train = datasets.ImageFolder(data_dir+"/train",transform=transform)
-X_val = datasets.ImageFolder(data_dir+"/val",transform=transform)
-X_test = datasets.ImageFolder(data_dir+"/test",transform=transform)
+X_train = datasets.ImageFolder(data_dir+"/train", transform=transform)
+X_val = datasets.ImageFolder(data_dir+"/val", transform=transform)
+X_test = datasets.ImageFolder(data_dir+"/test", transform=transform)
 
 dataloader_train = torch.utils.data.DataLoader(X_train, batch_size=32, shuffle=False)
 dataloader_val = torch.utils.data.DataLoader(X_val, batch_size=32, shuffle=False)
