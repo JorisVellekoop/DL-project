@@ -13,7 +13,7 @@ import torchvision.models as models
 
 class CNN(nn.Module):
     def __init__(self,input_channels,output_channels):
-        super(SegNet, self).__init__()
+        super(CNN, self).__init__()
         
         self.input_channels = input_channels
         self.output_channels = output_channels

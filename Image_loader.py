@@ -53,4 +53,4 @@ print(imagesy.shape)
 imshow(torchvision.utils.make_grid(images))
 imshow(torchvision.utils.make_grid(imagesy))
 # print labels
-print(' '.join('%5s' % classes[labels[j]] for j in range(4)))
+#print(' '.join('%5s' % classes[labels[j]] for j in range(4)))
