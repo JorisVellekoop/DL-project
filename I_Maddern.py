@@ -23,3 +23,14 @@ plt.show()
 plt.imshow(torch.transpose(sat.T,0,1), cmap='gray')
 plt.show()
 
+import cv2 as cv
+
+image = image.permute(1, 2, 0).numpy()
+
+cv_image = cv.cvtColor(image, cv.COLOR_RGB2HSV)
+
+plt.imshow(cv_image[:, :, 0], cmap='gray')
+plt.show()
+plt.imshow(cv_image[:,:, 1], cmap='gray')
+plt.show()
+
