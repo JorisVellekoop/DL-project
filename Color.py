@@ -13,11 +13,12 @@ def RGB2HSV(image):
 
     idx = max.indices == 0
     # print(image[1][idx] - image[2][idx])
-    hue[idx] += (image[1][idx] - image[2][idx])/(range[idx]) % 6
+    hue[idx] = (image[1][idx] - image[2][idx])/(range[idx]) % 6
     idx = max.indices == 1
-    hue[idx] += 2 + (image[2][idx] - image[0][idx])/(range[idx])
+    hue[idx] = 2 + (image[2][idx] - image[0][idx])/(range[idx])
     idx = max.indices == 2
-    hue[idx] += 4 + (image[0][idx] - image[1][idx])/(range[idx])
+    hue[idx] = 4 + (image[0][idx] - image[1][idx])/(range[idx])
+    #If range = 0, hue is undefined
 
     sat = range/max.values
 
