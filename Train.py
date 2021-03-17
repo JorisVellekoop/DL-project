@@ -15,7 +15,7 @@ import Segnet
 import torch.optim as optim
 import torch.nn as nn
 import torch
-from torch.utils.data import Dataset, TensorDataset
+from torch.utils.data import TensorDataset
 
 #GENERAL SETTINGS
 view = 0
@@ -77,22 +77,29 @@ def load_CAMVID(data_type='train', enc='ohe', shape='normal'):
     y = np.expand_dims(y, axis=-1)
   return x, y
 
+#Load in the data
 x_train, y_train = load_CAMVID(data_type='train')
 x_test, y_test = load_CAMVID(data_type='test')# Don't load test for RAM consumption
 x_val, y_val = load_CAMVID(data_type='val')
+
+#Convert to Tensor
+x_train = torch.Tensor(x_train)
+x_test = torch.Tensor(x_test)
+x_val = torch.Tensor(x_val)
+y_train = torch.Tensor(y_train)
+y_test = torch.Tensor(y_test)
+y_val = torch.Tensor(y_val)
 
 train_dataset = TensorDataset(x_train,y_train)
 val_dataset = TensorDataset(x_val,y_val)
 test_dataset = TensorDataset(x_test,y_test)
 
-dataloader_train = torch.utils.data.DataLoader(x_train, batch_size=12, shuffle=False)
-dataloader_val = torch.utils.data.DataLoader(x_val, batch_size=12, shuffle=False)
-dataloader_test = torch.utils.data.DataLoader(x_test, batch_size=12, shuffle=False)
+dataloader_train = torch.utils.data.DataLoader(train_dataset, batch_size=12, shuffle=False)
+dataloader_val = torch.utils.data.DataLoader(val_dataset, batch_size=12, shuffle=False)
+dataloader_test = torch.utils.data.DataLoader(test_dataset, batch_size=12, shuffle=False)
 
-dataloader_train_label = torch.utils.data.DataLoader(y_train, batch_size=12, shuffle=False)
-dataloader_val_label = torch.utils.data.DataLoader(y_val, batch_size=12, shuffle=False)
-dataloader_test_label = torch.utils.data.DataLoader(y_test, batch_size=12, shuffle=False)
 
+print("Begin trainen")
 
 model = Segnet.CNN(3,n_classes)
 
@@ -105,9 +112,9 @@ for epoch in range(n_epochs):  # loop over the dataset multiple times
     running_loss = 0.0
     for i, data in enumerate(dataloader_train, 0):
         # get the inputs; data is a list of [inputs, labels]
-        print(i,data)
         inputs, labels = data
-
+        print(inputs)
+        print(labels)
         # zero the parameter gradients
         optimizer.zero_grad()
 
