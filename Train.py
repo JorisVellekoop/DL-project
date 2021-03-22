@@ -3,6 +3,7 @@
 Created on Wed Mar 17 11:10:24 2021
 
 @author: remco
+    --gpu 1
 """
 import os
 from pathlib import Path
@@ -16,6 +17,8 @@ import torch.optim as optim
 import torch.nn as nn
 import torch
 from torch.utils.data import TensorDataset
+from torch.utils.data import DataLoader
+import argparse
 
 #GENERAL SETTINGS
 view = 0
@@ -23,6 +26,13 @@ batch_sz = 4
 n_epochs = 100
 steps_per_epoch = 1000
 validation_steps = 100
+
+
+# parser = argparse.ArgumentParser(description='Train a SegNet model')
+# parser.add_argument('--gpu', type=int)
+# args = parser.parse_args()
+# CUDA = args.gpu is not None
+# GPU_ID = args.gpu
 
 data_path = Path("CamVidData")
 
@@ -47,8 +57,13 @@ mask = cv2.cvtColor((mask).astype(np.uint8), cv2.COLOR_BGR2RGB)
 
 plt.imshow(mask)
 
+def get_class_probability(self):
+    values = np.array(list(self.counts.values()))
+    p_values = values/np.sum(values)
+
+    return torch.Tensor(p_values)
+
 def adjust_mask(mask, flat=False):
-    
     semantic_map = []
     for colour in list(cls2rgb.values()):        
         equality = np.equal(mask, colour)# 256x256x3 with True or False
@@ -78,49 +93,57 @@ def load_CAMVID(data_type='train', enc='ohe', shape='normal'):
   return x, y
 
 #Load in the data
-x_train, y_train = load_CAMVID(data_type='train')
-x_test, y_test = load_CAMVID(data_type='test')# Don't load test for RAM consumption
+x_train, y_train = load_CAMVID(data_type='train_small')
+#x_test, y_test = load_CAMVID(data_type='test')# Don't load test for RAM consumption
 x_val, y_val = load_CAMVID(data_type='val')
 
 #Convert to Tensor
-x_train = torch.Tensor(x_train)
-x_test = torch.Tensor(x_test)
-x_val = torch.Tensor(x_val)
-y_train = torch.Tensor(y_train)
-y_test = torch.Tensor(y_test)
-y_val = torch.Tensor(y_val)
+x_train = torch.Tensor(x_train).permute(0,3,1,2)
+print(x_train.shape)
+#x_test = torch.Tensor(x_test).permute(0,3,1,2)
+x_val = torch.Tensor(x_val).permute(0,3,1,2)
+y_train = torch.Tensor(y_train).permute(0,3,1,2)
+#y_test = torch.Tensor(y_test).permute(0,3,1,2)
+y_val = torch.Tensor(y_val).permute(0,3,1,2)
 
 train_dataset = TensorDataset(x_train,y_train)
 val_dataset = TensorDataset(x_val,y_val)
-test_dataset = TensorDataset(x_test,y_test)
+#test_dataset = TensorDataset(x_test,y_test)
 
-dataloader_train = torch.utils.data.DataLoader(train_dataset, batch_size=12, shuffle=False)
-dataloader_val = torch.utils.data.DataLoader(val_dataset, batch_size=12, shuffle=False)
-dataloader_test = torch.utils.data.DataLoader(test_dataset, batch_size=12, shuffle=False)
+dataloader_train = DataLoader(train_dataset, batch_size=2, shuffle=True)
+dataloader_val = DataLoader(val_dataset, batch_size=2, shuffle=False)
+#dataloader_test = DataLoader(test_dataset, batch_size=12, shuffle=False)
 
 
 print("Begin trainen")
 
-model = Segnet.CNN(3,n_classes)
+model = Segnet.CNN(3,n_classes)#.cuda(GPU_ID)
+
+#class_weights = 1.0/train_dataset.get_class_probability()
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
-
+model.train()
 
 for epoch in range(n_epochs):  # loop over the dataset multiple times
     running_loss = 0.0
+    loss = 0.0
     for i, data in enumerate(dataloader_train, 0):
         # get the inputs; data is a list of [inputs, labels]
         inputs, labels = data
-        print(inputs)
-        print(labels)
+    
+        print(inputs.shape)
+        print(labels.shape)
         # zero the parameter gradients
         optimizer.zero_grad()
 
         # forward + backward + optimize
         outputs = model(inputs)
-        loss = criterion(outputs, labels)
+        for z in range(len(inputs)):
+            print(outputs[z].shape)
+            print(labels[z].shape)
+            loss += criterion(outputs[z], labels[z])
         loss.backward()
         optimizer.step()
 
