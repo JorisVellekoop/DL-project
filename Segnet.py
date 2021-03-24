@@ -202,7 +202,7 @@ class CNN(nn.Module):
         x = F.relu(self.decoder_bn_12(self.decoder_conv_12(x)))
         x = self.decoder_conv_11(x)
         
-        x = F.softmax(x,dim=1)
-        return x
+        x_softmax = F.softmax(x,dim=1)
+        return x, x_softmax
 
 
