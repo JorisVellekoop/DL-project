@@ -32,6 +32,7 @@ def RGB2HSV(image):
 
     idx = max.values != 0
     sat[idx] = range[idx]/max.values[idx]
+    # if max = 0, sat = 0
 
     return 60*hue, sat, max.values
 

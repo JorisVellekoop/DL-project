@@ -22,13 +22,13 @@ from torch.utils.data import DataLoader
 #GENERAL SETTINGS
 view = 0
 batch_sz = 4
-n_epochs = 3
+n_epochs = 1
 
 
 
 data_path = Path("CamVidData")
 
-classes = pd.read_csv(data_path / 'class_dict_2.csv', index_col=0)
+classes = pd.read_csv(data_path / 'class_dict.csv', index_col=0)
 n_classes = len(classes)
 
 cls2rgb = {cl:list(classes.loc[cl,:]) for cl in classes.index}
@@ -65,7 +65,7 @@ def load_CAMVID(data_type='train', enc='ohe', shape='normal'):
   return x, y
 
 #Load in the data
-x_train, y_train = load_CAMVID(data_type='train')
+x_train, y_train = load_CAMVID(data_type='train_small')
 #x_test, y_test = load_CAMVID(data_type='test')# Don't load test for RAM consumption
 x_val, y_val = load_CAMVID(data_type='val')
 
@@ -100,13 +100,14 @@ model.train()
 
 for epoch in range(n_epochs):  # loop over the dataset multiple times
     for i, data in enumerate(dataloader_train, 0):
+        print(i)
         # get the inputs; data is a list of [inputs, labels]
         loss = 0.0
         inputs, labels = data
     
         # zero the parameter gradients
         optimizer.zero_grad()
-        predicted, softmaxed = model(inputs)
+        predicted, softmaxed = model.forward(inputs)
         for z in range(len(inputs)):
             loss += criterion(predicted[z], torch.max(labels[z],1)[1])
         loss.backward()
@@ -114,3 +115,6 @@ for epoch in range(n_epochs):  # loop over the dataset multiple times
 
 print('Finished Training')
 
+for i, data in enumerate(dataloader_train, 0):
+    inputs, labels = data
+    predicted, softmaxed = model.forward(inputs)
