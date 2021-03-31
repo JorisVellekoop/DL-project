@@ -65,7 +65,7 @@ def load_CAMVID(data_type='train', enc='ohe', shape='normal'):
   return x, y
 
 #Load in the data
-x_train, y_train = load_CAMVID(data_type='train')
+x_train, y_train = load_CAMVID(data_type='train_small')
 #x_test, y_test = load_CAMVID(data_type='test')# Don't load test for RAM consumption
 x_val, y_val = load_CAMVID(data_type='val')
 

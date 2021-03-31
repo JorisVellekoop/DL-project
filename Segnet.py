@@ -146,28 +146,33 @@ class CNN(nn.Module):
     def forward(self,input_image):
         #Encoder
         #First Layer
+        size_1 = input_image.size()
         x = F.relu(self.encoder_bn_11(self.encoder_conv_11(input_image)))
         x = F.relu(self.encoder_bn_12(self.encoder_conv_12(x)))
         x, idx1 = F.max_pool2d(x,kernel_size=2,stride=2,return_indices=True)
         
         #Second Layer
+        size_2 = x.size()
         x = F.relu(self.encoder_bn_21(self.encoder_conv_21(x)))
         x = F.relu(self.encoder_bn_22(self.encoder_conv_22(x)))
         x, idx2 = F.max_pool2d(x,kernel_size=2,stride=2,return_indices=True)
         
         #Third Layer
+        size_3 = x.size()
         x = F.relu(self.encoder_bn_31(self.encoder_conv_31(x)))
         x = F.relu(self.encoder_bn_32(self.encoder_conv_32(x)))
         x = F.relu(self.encoder_bn_33(self.encoder_conv_33(x)))
         x, idx3 = F.max_pool2d(x,kernel_size=2,stride=2,return_indices=True)
         
         #Fourth Layer
+        size_4 = x.size()
         x = F.relu(self.encoder_bn_41(self.encoder_conv_41(x)))
         x = F.relu(self.encoder_bn_42(self.encoder_conv_42(x)))
         x = F.relu(self.encoder_bn_43(self.encoder_conv_43(x)))
         x, idx4 = F.max_pool2d(x,kernel_size=2,stride=2,return_indices=True)
         
         #Fifth layer
+        size_5 = x.size()
         x = F.relu(self.encoder_bn_51(self.encoder_conv_51(x)))
         x = F.relu(self.encoder_bn_52(self.encoder_conv_52(x)))
         x = F.relu(self.encoder_bn_53(self.encoder_conv_53(x)))
@@ -175,30 +180,31 @@ class CNN(nn.Module):
         
         #Decoder
         #Fifth Layer
-        x = F.max_unpool2d(x, idx5, kernel_size=2,stride=2)
+        x = F.max_unpool2d(x, idx5, kernel_size=2,stride=2,output_size= size_5)
         x = F.relu(self.decoder_bn_53(self.decoder_conv_53(x)))
         x = F.relu(self.decoder_bn_52(self.decoder_conv_52(x)))
         x = F.relu(self.decoder_bn_51(self.decoder_conv_51(x)))
         
         #Fourth Layer
-        x = F.max_unpool2d(x, idx4, kernel_size=2,stride=2)
+        x = F.max_unpool2d(x, idx4, kernel_size=2,stride=2,output_size= size_4)
         x = F.relu(self.decoder_bn_43(self.decoder_conv_43(x)))
         x = F.relu(self.decoder_bn_42(self.decoder_conv_42(x)))
         x = F.relu(self.decoder_bn_41(self.decoder_conv_41(x)))
         
+        
         #Third Layer
-        x = F.max_unpool2d(x, idx3, kernel_size=2,stride=2)
+        x = F.max_unpool2d(x, idx3, kernel_size=2,stride=2,output_size= size_3)
         x = F.relu(self.decoder_bn_33(self.decoder_conv_33(x)))
         x = F.relu(self.decoder_bn_32(self.decoder_conv_32(x)))
         x = F.relu(self.decoder_bn_31(self.decoder_conv_31(x)))
                    
         #Second Layer
-        x = F.max_unpool2d(x, idx2, kernel_size=2,stride=2)
+        x = F.max_unpool2d(x, idx2, kernel_size=2,stride=2,output_size= size_2)
         x = F.relu(self.decoder_bn_22(self.decoder_conv_22(x)))
         x = F.relu(self.decoder_bn_21(self.decoder_conv_21(x)))
         
         #First Layer
-        x = F.max_unpool2d(x, idx1, kernel_size=2,stride=2)
+        x = F.max_unpool2d(x, idx1, kernel_size=2,stride=2,output_size= size_1)
         x = F.relu(self.decoder_bn_12(self.decoder_conv_12(x)))
         x = self.decoder_conv_11(x)
         
