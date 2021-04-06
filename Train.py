@@ -78,6 +78,8 @@ y_train = torch.Tensor(y_train).permute(0,3,1,2)
 #y_test = torch.Tensor(y_test).permute(0,3,1,2)
 y_val = torch.Tensor(y_val).permute(0,3,1,2)
 
+# print(x_val.shape, y_val.shape)
+
 train_dataset = TensorDataset(x_train,y_train)
 val_dataset = TensorDataset(x_val,y_val)
 #test_dataset = TensorDataset(x_test,y_test)
@@ -104,7 +106,7 @@ for epoch in range(n_epochs):  # loop over the dataset multiple times
         # get the inputs; data is a list of [inputs, labels]
         loss = 0.0
         inputs, labels = data
-    
+
         # zero the parameter gradients
         optimizer.zero_grad()
         predicted, softmaxed = model.forward(inputs)
@@ -115,6 +117,37 @@ for epoch in range(n_epochs):  # loop over the dataset multiple times
 
 print('Finished Training')
 
-for i, data in enumerate(dataloader_train, 0):
+
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, precision_recall_fscore_support
+confmat = np.zeros((32, 32)) #TODO dit niet hard coden, maar aanpassen aan gebruikte classes
+
+for i, data in enumerate(dataloader_train, 0): #TODO niet met train data testen
+    print(i)
     inputs, labels = data
-    predicted, softmaxed = model.forward(inputs)
+    _, softmaxed = model.forward(inputs)
+
+    pred_int = torch.argmax(softmaxed, dim=1)
+    true_int = torch.argmax(labels, dim=1)
+
+    confmat += confusion_matrix(true_int.detach().flatten(), pred_int.flatten())
+
+confmat_chance = confmat / confmat.sum(axis=1)[:, np.newaxis]
+
+plt.imshow(confmat, interpolation='nearest', cmap=plt.cm.Blues)
+plt.show()
+
+class_accuracy = np.diagonal(confmat_chance)
+class_average = np.mean(class_accuracy)
+global_accuracy = np.trace(confmat)/np.sum(confmat)
+
+sum_pred = np.sum(confmat, axis=0)
+sum_true = np.sum(confmat, axis=1)
+true_pos = np.diagonal(confmat)
+
+precision = np.mean(true_pos /sum_pred )
+recall = np.mean(true_pos / sum_true)
+
+mIoU = np.mean(true_pos/(sum_pred + sum_true - true_pos))
+
+print(class_accuracy, global_accuracy, precision, recall, mIoU)
+
