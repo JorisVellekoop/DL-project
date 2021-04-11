@@ -1,7 +1,10 @@
 import torchvision
 import torch
-import matplotlib.pyplot as plt
 import numpy as np
+import cv2
+import matplotlib.pyplot as plt
+from scipy.stats.mstats import gmean
+from scipy.stats import entropy
 
 data_dir = 'CamVidData'
 
@@ -81,56 +84,20 @@ def RGB2HSV(image):
     return 60*hue, sat, max.values
 
 
-#############
-# LIBRARIES
-#############
-import numpy as np
-import cv2
-import os
-import sys
-import matplotlib.image as mpimg
-import matplotlib.pyplot as plt
-from PIL import Image
-import scipy
-from scipy.optimize import leastsq
-from scipy.stats.mstats import gmean
-from scipy.signal import argrelextrema
-from scipy.stats import entropy
-from scipy.signal import savgol_filter
-
 def get_invariant_angle(image):
     """
     image: numpy.array , .shape => (height,width, channels)
 
     """
-    h, w = image.shape[:2]
-
     img = cv2.GaussianBlur(np.float32(image), (5,5), 0)
 
-    # Separate Channels
     r, g, b = cv2.split(img)
 
-    im_sum = np.sum(img, axis=2)
     im_mean = gmean(img, axis=2)
-
-    # Create "normalized", mean, and rg chromaticity vectors
-    #  We use mean (works better than norm). rg Chromaticity is
-    #  for visualization
 
     mean_r = np.ma.divide(1.*r, im_mean)
     mean_g = np.ma.divide(1.*g, im_mean)
     mean_b = np.ma.divide(1.*b, im_mean)
-
-    rg_chrom_r = np.ma.divide(1.*r, im_sum)
-    rg_chrom_g = np.ma.divide(1.*g, im_sum)
-    rg_chrom_b = np.ma.divide(1.*b, im_sum)
-
-    # Visualize rg Chromaticity --> DEBUGGING
-    rg_chrom = np.zeros_like(img)
-
-    rg_chrom[:,:,0] = np.clip(np.uint8(rg_chrom_r*255), 0, 255)
-    rg_chrom[:,:,1] = np.clip(np.uint8(rg_chrom_g*255), 0, 255)
-    rg_chrom[:,:,2] = np.clip(np.uint8(rg_chrom_b*255), 0, 255)
 
     log_r = np.ma.log(mean_r)
     log_g = np.ma.log(mean_g)
@@ -151,13 +118,10 @@ def get_invariant_angle(image):
     U = np.dot(np.eye(3)*np.sqrt(s), V_)
     U = U[ ~np.all( U == 0, axis = 1) ].T
 
-    # Columns are upside down and column 2 is negated...?
     U = U[::-1,:]
     U[:,1] *= -1.
 
     chi = rho.dot(U)
-
-    # Visualize chi --> DEBUGGING
 
     e = np.array([[np.cos(np.radians(np.linspace(1, 180, 180))),
                    np.sin(np.radians(np.linspace(1, 180, 180)))]])
