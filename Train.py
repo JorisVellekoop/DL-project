@@ -118,7 +118,7 @@ for epoch in range(n_epochs):  # loop over the dataset multiple times
 print('Finished Training')
 
 
-from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, precision_recall_fscore_support
+from sklearn.metrics import confusion_matrix
 confmat = np.zeros((32, 32)) #TODO dit niet hard coden, maar aanpassen aan gebruikte classes
 
 for i, data in enumerate(dataloader_train, 0): #TODO niet met train data testen
