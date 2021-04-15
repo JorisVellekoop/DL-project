@@ -26,7 +26,7 @@ n_epochs = 1
 
 
 
-data_path = Path("CamVidData")
+data_path = Path("../CamVidData")
 
 classes = pd.read_csv(data_path / 'class_dict.csv', index_col=0)
 n_classes = len(classes)
