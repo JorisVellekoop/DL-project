@@ -1,14 +1,11 @@
 #%matplotlib inline
 import matplotlib.pyplot as plt
 import torch
-import numpy
 from torchvision import datasets, transforms
 #import helper
 import Segnet
-import random
-import numpy as np
 
-data_dir = 'CamVidData'
+data_dir = '../CamVidData'
 
 transform = transforms.Compose([transforms.ToTensor()])
 
@@ -29,7 +26,7 @@ dataloader_train_label = torch.utils.data.DataLoader(X_train_label, batch_size=1
 dataloader_val_label = torch.utils.data.DataLoader(X_val_label, batch_size=12, shuffle=False)
 dataloader_test_label = torch.utils.data.DataLoader(X_test_label, batch_size=12, shuffle=False)
 
-net = Segnet.CNN(2,2)
+net = Segnet.CNN(2, 2)
 
 label_colours = torch.tensor([
     [0.5020,0.5020,0.5020], #Sky

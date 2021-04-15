@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from torchvision import datasets, transforms
 
-data_dir = 'CamVidData'
+data_dir = '../CamVidData'
 
 transform = transforms.Compose(
     [transforms.ToTensor(),
