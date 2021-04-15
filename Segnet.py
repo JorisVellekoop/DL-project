@@ -62,39 +62,39 @@ class CNN(nn.Module):
         
         ###Decoder
         #Fift Layer
-        self.decoder_convtr_53  = nn.ConvTranspose2d(512,512,kernel_size=3,padding=1)
+        self.decoder_conv_53  = nn.ConvTranspose2d(512,512,kernel_size=3,padding=1)
         self.decoder_bn_53      = nn.BatchNorm2d(512)
-        self.decoder_convtr_52  = nn.ConvTranspose2d(512,512,kernel_size=3,padding=1)
+        self.decoder_conv_52  = nn.ConvTranspose2d(512,512,kernel_size=3,padding=1)
         self.decoder_bn_52      = nn.BatchNorm2d(512)
-        self.decoder_convtr_51  = nn.ConvTranspose2d(512,512,kernel_size=3,padding=1)
+        self.decoder_conv_51  = nn.ConvTranspose2d(512,512,kernel_size=3,padding=1)
         self.decoder_bn_51      = nn.BatchNorm2d(512)
         
         #Fourd Layer
-        self.decoder_convtr_43  = nn.ConvTranspose2d(512,512,kernel_size=3,padding=1)
+        self.decoder_conv_43  = nn.ConvTranspose2d(512,512,kernel_size=3,padding=1)
         self.decoder_bn_43      = nn.BatchNorm2d(512)
-        self.decoder_convtr_42  = nn.ConvTranspose2d(512,512,kernel_size=3,padding=1)
+        self.decoder_conv_42  = nn.ConvTranspose2d(512,512,kernel_size=3,padding=1)
         self.decoder_bn_42      = nn.BatchNorm2d(512)
-        self.decoder_convtr_41  = nn.ConvTranspose2d(512,256,kernel_size=3,padding=1)
+        self.decoder_conv_41  = nn.ConvTranspose2d(in_channels=512,out_channels=256,kernel_size=3,padding=1)
         self.decoder_bn_41      = nn.BatchNorm2d(256)
         
         #Third Layer
-        self.decoder_convtr_33  = nn.ConvTranspose2d(256,256,kernel_size=3,padding=1)
+        self.decoder_conv_33  = nn.ConvTranspose2d(256,256,kernel_size=3,padding=1)
         self.decoder_bn_33      = nn.BatchNorm2d(256)
-        self.decoder_convtr_32  = nn.ConvTranspose2d(256,256,kernel_size=3,padding=1)
+        self.decoder_conv_32  = nn.ConvTranspose2d(256,256,kernel_size=3,padding=1)
         self.decoder_bn_32      = nn.BatchNorm2d(256)
-        self.decoder_convtr_31  = nn.ConvTranspose2d(256,128,kernel_size=3,padding=1)
+        self.decoder_conv_31  = nn.ConvTranspose2d(256,128,kernel_size=3,padding=1)
         self.decoder_bn_31      = nn.BatchNorm2d(128)
         
         #Second Layer
-        self.decoder_convtr_22  = nn.ConvTranspose2d(128,128,kernel_size=3,padding=1)
+        self.decoder_conv_22  = nn.ConvTranspose2d(128,128,kernel_size=3,padding=1)
         self.decoder_bn_22      = nn.BatchNorm2d(128)
-        self.decoder_convtr_21  = nn.ConvTranspose2d(128,64,kernel_size=3,padding=1)
+        self.decoder_conv_21  = nn.ConvTranspose2d(128,64,kernel_size=3,padding=1)
         self.decoder_bn_21      = nn.BatchNorm2d(64)
         
         #First Layer
-        self.decoder_convtr_12  = nn.ConvTranspose2d(64,64,kernel_size=3,padding=1)
+        self.decoder_conv_12  = nn.ConvTranspose2d(64,64,kernel_size=3,padding=1)
         self.decoder_bn_12      = nn.BatchNorm2d(64)
-        self.decoder_convtr_11  = nn.ConvTranspose2d(64,output_channels,kernel_size=3,padding=1)
+        self.decoder_conv_11  = nn.ConvTranspose2d(64,output_channels,kernel_size=3,padding=1)
                 
         
         
@@ -143,66 +143,66 @@ class CNN(nn.Module):
         self.encoder_conv_53.weight.data = self.VGG16.features[28].weight.data
         self.encoder_conv_53.bias.data = self.VGG16.features[28].bias.data
         
-    def Forward(self,input_image):
+    def forward(self,input_image):
         #Encoder
         #First Layer
-        x = F.relu(self.encoder_bn_11(self.encoder_conv11(input_image)))
-        x = F.relu(self.encoder_bn_12(self.encoder_conv12(x)))
+        x = F.relu(self.encoder_bn_11(self.encoder_conv_11(input_image)))
+        x = F.relu(self.encoder_bn_12(self.encoder_conv_12(x)))
         x, idx1 = F.max_pool2d(x,kernel_size=2,stride=2,return_indices=True)
         
         #Second Layer
-        x = F.relu(self.encoder_bn_21(self.encoder_conv21(x)))
-        x = F.relu(self.encoder_bn_22(self.encoder_conv22(x)))
+        x = F.relu(self.encoder_bn_21(self.encoder_conv_21(x)))
+        x = F.relu(self.encoder_bn_22(self.encoder_conv_22(x)))
         x, idx2 = F.max_pool2d(x,kernel_size=2,stride=2,return_indices=True)
         
         #Third Layer
-        x = F.relu(self.encoder_bn_31(self.encoder_conv31(x)))
-        x = F.relu(self.encoder_bn_32(self.encoder_conv32(x)))
-        x = F.relu(self.encoder_bn_33(self.encoder_conv33(x)))
+        x = F.relu(self.encoder_bn_31(self.encoder_conv_31(x)))
+        x = F.relu(self.encoder_bn_32(self.encoder_conv_32(x)))
+        x = F.relu(self.encoder_bn_33(self.encoder_conv_33(x)))
         x, idx3 = F.max_pool2d(x,kernel_size=2,stride=2,return_indices=True)
         
         #Fourth Layer
-        x = F.relu(self.encoder_bn_41(self.encoder_conv41(x)))
-        x = F.relu(self.encoder_bn_42(self.encoder_conv42(x)))
-        x = F.relu(self.encoder_bn_43(self.encoder_conv43(x)))
+        x = F.relu(self.encoder_bn_41(self.encoder_conv_41(x)))
+        x = F.relu(self.encoder_bn_42(self.encoder_conv_42(x)))
+        x = F.relu(self.encoder_bn_43(self.encoder_conv_43(x)))
         x, idx4 = F.max_pool2d(x,kernel_size=2,stride=2,return_indices=True)
         
         #Fifth layer
-        x = F.relu(self.encoder_bn_51(self.encoder_conv51(x)))
-        x = F.relu(self.encoder_bn_52(self.encoder_conv52(x)))
-        x = F.relu(self.encoder_bn_53(self.encoder_conv53(x)))
+        x = F.relu(self.encoder_bn_51(self.encoder_conv_51(x)))
+        x = F.relu(self.encoder_bn_52(self.encoder_conv_52(x)))
+        x = F.relu(self.encoder_bn_53(self.encoder_conv_53(x)))
         x, idx5 = F.max_pool2d(x,kernel_size=2,stride=2,return_indices=True)
         
         #Decoder
         #Fifth Layer
         x = F.max_unpool2d(x, idx5, kernel_size=2,stride=2)
-        x = F.relu(self.decoder_bn_53(self.decoder_conv53(x)))
-        x = F.relu(self.decoder_bn_52(self.decoder_conv52(x)))
-        x = F.relu(self.decoder_bn_51(self.decoder_conv51(x)))
+        x = F.relu(self.decoder_bn_53(self.decoder_conv_53(x)))
+        x = F.relu(self.decoder_bn_52(self.decoder_conv_52(x)))
+        x = F.relu(self.decoder_bn_51(self.decoder_conv_51(x)))
         
         #Fourth Layer
         x = F.max_unpool2d(x, idx4, kernel_size=2,stride=2)
-        x = F.relu(self.decoder_bn_43(self.decoder_conv43(x)))
-        x = F.relu(self.decoder_bn_42(self.decoder_conv42(x)))
-        x = F.relu(self.decoder_bn_41(self.decoder_conv41(x)))
+        x = F.relu(self.decoder_bn_43(self.decoder_conv_43(x)))
+        x = F.relu(self.decoder_bn_42(self.decoder_conv_42(x)))
+        x = F.relu(self.decoder_bn_41(self.decoder_conv_41(x)))
         
         #Third Layer
         x = F.max_unpool2d(x, idx3, kernel_size=2,stride=2)
-        x = F.relu(self.decoder_bn_33(self.decoder_conv33(x)))
-        x = F.relu(self.decoder_bn_32(self.decoder_conv32(x)))
-        x = F.relu(self.decoder_bn_31(self.decoder_conv31(x)))
+        x = F.relu(self.decoder_bn_33(self.decoder_conv_33(x)))
+        x = F.relu(self.decoder_bn_32(self.decoder_conv_32(x)))
+        x = F.relu(self.decoder_bn_31(self.decoder_conv_31(x)))
                    
         #Second Layer
         x = F.max_unpool2d(x, idx2, kernel_size=2,stride=2)
-        x = F.relu(self.decoder_bn_22(self.decoder_conv22(x)))
-        x = F.relu(self.decoder_bn_21(self.decoder_conv21(x)))
+        x = F.relu(self.decoder_bn_22(self.decoder_conv_22(x)))
+        x = F.relu(self.decoder_bn_21(self.decoder_conv_21(x)))
         
         #First Layer
         x = F.max_unpool2d(x, idx1, kernel_size=2,stride=2)
-        x = F.relu(self.decoder_bn_12(self.decoder_conv12(x)))
-        x = self.decoder_conv41(x)
+        x = F.relu(self.decoder_bn_12(self.decoder_conv_12(x)))
+        x = self.decoder_conv_11(x)
         
-        x = F.softmax(x,dim=1)
-        return x
+        x_softmax = F.softmax(x,dim=1)
+        return x, x_softmax
 
 
