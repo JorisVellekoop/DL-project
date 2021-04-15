@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from scipy.stats.mstats import gmean
 from scipy.stats import entropy
 
-data_dir = 'CamVidData'
+data_dir = '../CamVidData'
 
 train_dataset = torchvision.datasets.ImageFolder(root=data_dir, transform=torchvision.transforms.ToTensor())
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=1, shuffle=False)
@@ -138,7 +138,10 @@ def get_invariant_angle(image):
     return theta_min
 
 def Transfrom_Maddern(image, a=48, HS=False):
-    I_maddern = 0.5 + torch.log(image[1]) - a * torch.log(image[2]) - (1 - a) * torch.log(image[0])
+    I_maddern = 0.5* torch.ones(image[0].shape)
+    I_maddern[image[1]>0] += torch.log(image[1][image[1]>0])
+    I_maddern[image[2]>0] += - a * torch.log(image[2][image[2]>0])
+    I_maddern[image[0]>0] += - (1 - a) * torch.log(image[0][image[0]>0])
 
     if HS:
         hue, sat, _ = RGB2HSV(image)
@@ -156,20 +159,21 @@ def Transform_Alvarez(image, a=5000, theta=0.6545, HS=False):
 
     return I_alvarez
 
+
 plt.imshow(images[0].permute((1,2,0)))
 plt.show()
 
-angle = get_invariant_angle(images[0].permute(1,2,0))
-image1 = Transform_Alvarez(images[0], theta=angle)
-plt.imshow(image1, cmap='gray')
-plt.show()
+# angle = get_invariant_angle(images[0].permute(1,2,0))
+# image1 = Transform_Alvarez(images[0], theta=angle)
+# plt.imshow(image1, cmap='gray')
+# plt.show()
 
 
 
 # image_test = LocalContrastNorm(images)
 # ret = image_test[0].numpy().transpose((1,2,0))
 # scaled_ret = (ret - ret.min())/(ret.max() - ret.min())
-# image_maddern = Transfrom_Maddern(images[0])
+image_maddern = Transfrom_Maddern(images[0], HS=True)
 # # image_alvarez = Transform_Alvarez(images[0])
 #
 # plt.imshow(scaled_ret)
@@ -178,8 +182,8 @@ plt.show()
 # plt.imshow(images[0].permute((1,2,0)))
 # plt.show()
 #
-# plt.imshow(image_maddern, cmap='gray')
-# plt.show()
+plt.imshow(image_maddern, cmap='gray')
+plt.show()
 # # plt.imshow(image_alvarez, cmap='gray')
 # # plt.show()
 

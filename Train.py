@@ -12,7 +12,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 from keras.preprocessing.image import load_img
-import Segnet
+from old import Segnet
 import torch.optim as optim
 import torch.nn as nn
 import torch
@@ -91,7 +91,7 @@ dataloader_val = DataLoader(val_dataset, batch_size=2, shuffle=False)
 
 print("Begin trainen")
 
-model = Segnet.CNN(3,n_classes)#.cuda(GPU_ID)
+model = Segnet.CNN(3, n_classes)#.cuda(GPU_ID)
 
 #class_weights = 1.0/train_dataset.get_class_probability()
 
